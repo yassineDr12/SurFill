@@ -1,0 +1,28 @@
+{% extends 'survey/base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="title has-text-success">Available Surveys</h1>
+
+      {% if surveys %}
+        <ul>
+          {% for survey in surveys %}
+            <div class="box{% if forloop.first %}{% else %} is-greyed-out{% endif %}">
+              <h1 class="title{% if forloop.first %}{% else %} has-text-grey{% endif %}">{{ survey.title }}</h1>
+              <p class="subtitle">Created by {{ survey.created_by.username }} on {{ survey.created_at }}</p>
+              {% if forloop.first %}
+                <a class="button is-success is-outlined" href="{% url 'fill_survey' survey.id %}">Fill Survey</a>
+              {% else %}
+                <button class="button is-success is-outlined" disabled>Fill Survey</button>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>There are no surveys available at this time. Please check back later.</p>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+Here, we added an `is-greyed-out` class to the `box` element for all surveys beyond the first one, and added a `has-text-grey` class to the `title` element for all surveys beyond the first one. We also conditionally rendered a "Fill Survey" button for the first survey and a disabled button for all surveys beyond the first one.

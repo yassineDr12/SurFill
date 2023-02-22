@@ -1,0 +1,63 @@
+{% extends 'survey/base.html' %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title has-text-centered">
+      SurFill
+    </h1>
+
+    <div class="columns">
+      <div class="column is-offset-2 is-8">
+        <h2 class="subtitle">
+          Results for Survey: {{ survey.title }} ({{ survey.allocated_points }} points allocated)
+        </h2>
+
+          <ol>
+            {% for question in questions %}
+            <li style="padding-bottom: 25px;">
+              <p>{{ question.text }}</p>
+              <div style="margin-left: 30px;">
+                <table class='table'>
+                  <thead>
+                    <tr>
+                      <td>Choice</td>
+                      <td>Responses</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for choice in question.choices %}
+                    <tr>
+                      <td>{{ choice.text }}</td>
+                      <td>{{ choice.responses }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </li>
+            {% endfor %}
+          </ol>
+
+          <form method="post" action="{% url 'survey_results' survey.id %}">
+            {% csrf_token %}
+            <div class="field">
+              <label class="label">Allocate More Points ({{ request.user.points }} points max):</label>
+              <div class="control">
+                <input class="input" type="number" name="points" min="0" max ="{{ request.user.points }}" value="0">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="submit" class="button is-primary">Allocate</button>
+              </div>
+            </div>
+          </form>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% endblock %}

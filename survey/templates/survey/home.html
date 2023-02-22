@@ -1,0 +1,60 @@
+{% extends 'survey/base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SurFill</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+			background-color: #fff;
+		}
+		h1 {
+			font-size: 4rem;
+			margin: 0;
+			text-align: center;
+			color: #23D160;
+		}
+		p {
+			font-size: 1.5rem;
+			text-align: center;
+			margin: 1rem 0;
+			color: #555;
+			max-width: 800px;
+			line-height: 1.5;
+		}
+		button {
+			background-color: #23D160;
+			color: #fff;
+			padding: 1rem 2rem;
+			border: none;
+			border-radius: 5px;
+			font-size: 1.5rem;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+		button:hover {
+			background-color: #1e88e5;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Welcome to SurFill</h1>
+		<p>A simple and easy-to-use platform for creating and taking surveys.</p>
+	</div>
+</body>
+</html>
+
+{% endblock %}
