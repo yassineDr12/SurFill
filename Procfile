@@ -1,1 +1,1 @@
-web: gunicorn SurFill.wsgi:application --log-file -
+web: gunicorn SurFill.wsgi:application --log-file - 
