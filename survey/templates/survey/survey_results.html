@@ -50,6 +50,9 @@
             <div class="field">
               <div class="control">
                 <button type="submit" class="button is-primary">Allocate</button>
+                {% csrf_token %}
+                <input type="submit" class="button is-danger" name="delete" value="Delete Survey">
+
               </div>
             </div>
           </form>

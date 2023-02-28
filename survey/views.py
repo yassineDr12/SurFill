@@ -44,10 +44,10 @@ def home(request):
 
 def SurveyListview(request):
     update_surveys()
-    surveys = Survey.objects.all()
+    surveys = Survey.objects.filter(expired=False)
     user_responses = SurveyResponse.objects.filter(created_by=request.user)
     answered_surveys = [response.question.survey for response in user_responses]
-    unanswered_surveys = surveys.exclude(id__in=[survey.id for survey in answered_surveys])
+    unanswered_surveys = surveys.exclude(id__in=[survey.id for survey in answered_surveys if survey])
     sorted_surveys = sorted(unanswered_surveys, key=lambda survey: survey.priorityValue(), reverse=True)
     context = {'surveys': sorted_surveys}
     return render(request, 'survey/list_surveys.html', context)
@@ -251,6 +251,12 @@ class SurveyResultsView(PermissionRequiredMixin, View):
         return render(request, 'survey/survey_results.html', context)
 
     def post(self, request, survey_id):
+        if 'delete' in request.POST:
+            survey = self.get_object()
+            request.user.points += survey.allocated_points
+            request.user.save()
+            survey.delete()
+            return redirect('profile')
         survey = get_object_or_404(Survey, id=survey_id)
         points = int(request.POST.get('points', 0))
         if points > 0:
