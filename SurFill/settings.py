@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-import django_heroku
 import dj_database_url
 
 from django.test.runner import DiscoverRunner
