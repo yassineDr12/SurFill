@@ -8,6 +8,7 @@ from django.conf import settings
 
 class CustomUser(AbstractUser):
     points = models.IntegerField(default=0)
+    group_name = models.TextField(null=True, default=None)
  
  
 class Survey(models.Model):

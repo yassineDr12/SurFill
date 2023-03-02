@@ -12,16 +12,24 @@ class SurveyResponseForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         for question in questions:
-            self.fields[f'question_{question.id}'] = forms.ChoiceField(
-                label=question.text,
-                choices=[(c.id, c.text) for c in question.choices.all()],
-                widget=forms.RadioSelect
-            )
+            if question.choices.exists():
+                self.fields[f'question_{question.id}'] = forms.ChoiceField(
+                    label=question.text,
+                    choices=[(c.id, c.text) for c in question.choices.all()],
+                    widget=forms.RadioSelect
+                )
+            else:
+                self.fields[f'question_{question.id}'] = forms.CharField(
+                    label=question.text,
+                    widget=forms.TextInput(attrs={'class': 'input'})
+                )
+
                     
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(max_length=150)
+    group_name = forms.CharField(max_length=50, required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'group_name', 'password1', 'password2')
 

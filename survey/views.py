@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from datetime import datetime
+from django.db import models
 
 from django.views import View
 
@@ -71,19 +72,20 @@ def fill_survey(request, survey_id):
             for question, choice_id in form.cleaned_data.items():
                 if question.startswith('question_'):
                     question_id = question.replace('question_', '')
-                    choice = Choice.objects.get(id=choice_id)
+                    question = Question.objects.get(id=question_id)
+                    if isinstance(choice_id, str):
+                        choice = Choice.objects.create(text=choice_id, question_id=question_id)
+                    else:    
+                        choice = Choice.objects.get(id=choice_id)
                     if request.user.is_authenticated:
                         user = request.user
                         user.points += 1
                         user.save()
                         survey.allocated_points -= 1
                         survey.save()
-                        SurveyResponse.objects.create(question_id=question_id,
-                        choice=choice, created_by=user)
+                        SurveyResponse.objects.create(question_id=question_id, choice=choice, created_by=user)
                     else:
-                        SurveyResponse.objects.create(
-                        question_id=question_id,
-                        choice=choice)    
+                        SurveyResponse.objects.create(question_id=question_id, choice=choice)    
             return HttpResponseRedirect(reverse('survey_submitted'))
 
     context = {
@@ -102,10 +104,10 @@ class RegisterView(View):
             user = form.save(commit=False)
             user.is_valid = False
             user.save()
-            token = user_tokenizer.make_token(user)
-            user_id = urlsafe_base64_encode(force_bytes(str(user.id)))
-            url = 'http://localhost:8000' + reverse('confirm_email', kwargs={'user_id': user_id, 'token': token})
-            message = get_template('survey/register_email.html').render({'confirm_url': url})
+            #token = user_tokenizer.make_token(user)
+            #user_id = urlsafe_base64_encode(force_bytes(str(user.id)))
+            #url = 'http://localhost:8000' + reverse('confirm_email', kwargs={'user_id': user_id, 'token': token})
+            #message = get_template('survey/register_email.html').render({'confirm_url': url})
             #mail = EmailMessage('SurFill Email Confirmation', message, to=[user.email], from_email=settings.EMAIL_HOST_USER)
             #mail.content_subtype = 'html'
             #mail.send()
@@ -264,6 +266,7 @@ class SurveyResultsView(PermissionRequiredMixin, View):
             survey.save()
             request.user.points -= int(points)
             request.user.save()
+            return redirect('profile') 
         return redirect('survey_results', survey_id=survey_id)    
 
 

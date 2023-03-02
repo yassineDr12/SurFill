@@ -5,7 +5,7 @@ from .models import Survey, Question, Choice, SurveyResponse
 from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'points', 'is_staff')
+    list_display = ('username', 'email', 'points', 'is_staff', 'group_name')
 
 admin.site.register(CustomUser, CustomUserAdmin)
 
