@@ -18,7 +18,7 @@
         <h3 class="subtitle">Your Surveys:</h3>
         <div class="content">
           <ul>
-            {% for survey in survey_results %}
+            {% for survey in surveys %}
             <li>
               <a href="{% url 'survey_results' survey.id %}">{{ survey.title }}</a>
               {% if survey.expired %}
