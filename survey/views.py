@@ -79,13 +79,14 @@ def fill_survey(request, survey_id):
                         choice = Choice.objects.get(id=choice_id)
                     if request.user.is_authenticated:
                         user = request.user
-                        user.points += 1
-                        user.save()
-                        survey.allocated_points -= 1
-                        survey.save()
                         SurveyResponse.objects.create(question_id=question_id, choice=choice, created_by=user)
                     else:
-                        SurveyResponse.objects.create(question_id=question_id, choice=choice)    
+                        SurveyResponse.objects.create(question_id=question_id, choice=choice)   
+            if request.user.is_authenticated:             
+                user.points += 1
+                user.save()
+                survey.allocated_points -= 1
+                survey.save()
             return HttpResponseRedirect(reverse('survey_submitted'))
 
     context = {
@@ -148,13 +149,9 @@ class ProfileView(LoginRequiredMixin, View):
     update_surveys()
 
     def get(self, request):
-        surveys = Survey.objects.filter(created_by=request.user).all()
-        survey_results = get_objects_for_user(request.user, 'can_view_results', klass=Survey)
+        surveys = Survey.objects.filter(created_by=request.user)
 
-        context = {
-          'surveys': surveys,
-          'survey_results': survey_results
-        }
+        context = {'surveys': surveys}
 
         return render(request, 'survey/profile.html', context)
 
@@ -230,7 +227,7 @@ class SurveyResultsView(PermissionRequiredMixin, View):
         self.obj = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
         return self.obj
 
-    def get(self, request, survey_id):
+    def get(self, request):
         questions = []
         for question in self.obj.questions.all():
             question_vm = QuestionViewModel(question.text)
