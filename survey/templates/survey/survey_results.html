@@ -1,43 +1,126 @@
+<style>
+  body {
+      background-color: #f5f5f5;
+  }
+
+  section {
+      padding: 50px 0;
+  }
+
+  .title {
+      font-size: 4rem;
+      font-weight: bold;
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+  }
+
+  .subtitle {
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+  }
+
+  form {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  }
+  .question-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.question-item {
+  margin-bottom: 25px;
+}
+
+.question-text {
+  font-weight: bold;
+}
+
+.choice-table {
+  width: 100%;
+  max-width: 500px;
+  margin: 10px 0;
+  border-collapse: collapse;
+  border: 1px solid #00D1B2;
+}
+
+.choice-table th,
+.choice-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #00D1B2;
+}
+
+.choice-table th {
+  background-color: #00D1B2;
+  color: #fff;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+}
+
+
+</style>
 {% extends 'survey/base.html' %}
 
 {% block content %}
+
+<div class="container">\<br><br>
+  <h2 class="subtitle has-text-centered">
+    Results for Survey: {{ survey.title }}<br>{{ survey.allocated_points }} point(s) allocated
+  </h2>
+</div>
+
+
 <section class="section">
+
   <div class="container">
-    <h1 class="title has-text-centered">
-      SurFill
-    </h1>
 
     <div class="columns">
       <div class="column is-offset-2 is-8">
-        <h2 class="subtitle">
-          Results for Survey: {{ survey.title }} ({{ survey.allocated_points }} points allocated)
-        </h2>
 
-          <ol>
-            {% for question in questions %}
-            <li style="padding-bottom: 25px;">
-              <p>{{ question.text }}</p>
-              <div style="margin-left: 30px;">
-                <table class='table'>
-                  <thead>
-                    <tr>
-                      <td>Choice</td>
-                      <td>Responses</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for choice in question.choices %}
-                    <tr>
-                      <td>{{ choice.text }}</td>
-                      <td>{{ choice.responses }}</td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </li>
-            {% endfor %}
-          </ol>
+        <ol class="question-list">
+          {% for question in questions %}
+          <li class="question-item">
+            <p class="question-text">{{ question.text }}</p>
+            <div class="choice-table-container">
+              <table class='table choice-table'>
+                <thead>
+                  <tr>
+                    <th>Answer</th>
+                    <th>No.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for choice in question.choices %}
+                  <tr>
+                    <td>{{ choice.text }}</td>
+                    <td>{{ choice.responses }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>        
 
           <form method="post" action="{% url 'survey_results' survey.id %}">
             {% csrf_token %}

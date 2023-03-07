@@ -1,3 +1,4 @@
+<!-- login.html -->
 {% extends 'survey/base.html' %}
 {% load widget_tweaks %}
 
@@ -6,61 +7,47 @@
 <section class="hero is-success is-fullheight">
   <div class="hero-body">
     <div class="container">
-      <h1 class="title has-text-centered" style="color: #000000b0;">
+      <h1 class="title has-text-centered">
         SurFill
       </h1>
 
       <div class="columns">
-        <div class="column is-offset-3 is-6">
-          <h2 class="subtitle has-text-weight-bold" style="color: #000000b0;">
+        <div class="column is-offset-2 is-8">
+          <h2 class="subtitle">
             Login
           </h2>
-          <p class='has-text-centered has-text-danger'>
-            {{ message }}
-          </p><br>
+          <p class='has-text-centered'>{{ message }}</p>
 
-          <form action="{% url 'login' %}" method="POST" class="box">
+          <form action="{% url 'login' %}" method="POST">
             {% csrf_token %}
-
+    
             <div class="field">
               <label for="{{ form.username.id_for_label }}" class="label">
                 Username
               </label>
-              <div class="control has-icons-left">
+              <div class="control">
                 {{ form.username|add_class:"input" }}
-                <span class="icon is-small is-left">
-                  <i class="fas fa-user"></i>
-                </span>
               </div>
               <p class="help is-danger">{{ form.username.errors }}</p>
             </div>
-
+    
             <div class="field">
               <label for="{{ form.password.id_for_label }}" class="label">
                 Password
               </label>
-              <div class="control has-icons-left">
+              <div class="control">
                 {{ form.password|add_class:"input" }}
-                <span class="icon is-small is-left">
-                  <i class="fas fa-lock"></i>
-                </span>
               </div>
               <p class="help is-danger">{{ form.password.errors }}</p>
             </div>
-
+    
             <div class="field is-grouped">
               <div class="control">
-                <button class="button is-link">
-                  Login
-                </button>
+                <button class="button is-link">Login</button>
               </div>
             </div>
           </form>
           <hr>
-          <p class="has-text-centered has-text-weight-bold" style="color: #000000b0;">
-            Don't have an account? 
-            <a href="{% url 'register' %}">Sign up here</a>
-          </p>
         </div>
       </div>
 

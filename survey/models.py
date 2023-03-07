@@ -25,12 +25,6 @@ class Survey(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     allocated_points = models.IntegerField(default=0)
     expired = models.BooleanField(default=False)
-
-    class Meta:
-        permissions = (
-          # ('view_survey', 'View survey'),
-          ('view_results', 'View survey results'),
-        )
     
     def __str__(self):
         return f"Survey({self.id}): {self.title}"
@@ -46,7 +40,7 @@ class Question(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     survey = models.ForeignKey(
         Survey, 
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='questions'
@@ -61,7 +55,7 @@ class Choice(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     question = models.ForeignKey(
         Question, 
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='choices'
@@ -76,14 +70,14 @@ class SurveyResponse(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     question = models.ForeignKey(
         Question, 
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='question_responses'
     )
     choice = models.ForeignKey(
         Choice,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='choices_selected'

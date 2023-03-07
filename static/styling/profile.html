@@ -2,14 +2,18 @@
 
 {% block content %}
 
-<div class="container">
-  <br><br><h1 class="title has-text-centered">
-    SurFill
-  </h1>
-  <h2 class="subtitle has-text-centered">
-    Welcome {{ request.user.username }}
-  </h2>
-</div>
+<section class="hero is-primary is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered">
+        SurFill
+      </h1>
+      <h2 class="subtitle has-text-centered">
+        Welcome {{ request.user.username }}
+      </h2>
+    </div>
+  </div>
+</section>
 
 <section class="section">
   <div class="container">

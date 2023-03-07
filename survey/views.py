@@ -14,12 +14,8 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from datetime import datetime
-from django.db import models
 
 from django.views import View
-
-from guardian.mixins import PermissionRequiredMixin
-from guardian.shortcuts import get_objects_for_user
 
 from .models import Survey, Question, Choice, SurveyResponse
 from .tokens import user_tokenizer
@@ -85,8 +81,8 @@ def fill_survey(request, survey_id):
             if request.user.is_authenticated:             
                 user.points += 1
                 user.save()
-                survey.allocated_points -= 1
                 survey.save()
+            survey.allocated_points -= 1    
             return HttpResponseRedirect(reverse('survey_submitted'))
 
     context = {
@@ -127,6 +123,10 @@ class LoginView(View):
 
     def post(self, request):
         form = AuthenticationForm(request, data=request.POST)
+        remember_me = form.cleaned_data['remember_me']  # get remember me data from cleaned_data of form
+        if not remember_me:
+            self.request.session.set_expiry(0)  # if remember me is 
+            self.request.session.modified = True
         if form.is_valid():
             try:
                 form.clean()
@@ -220,14 +220,14 @@ class ChoiceResultViewModel:
         self.responses = responses
 
 
-class SurveyResultsView(PermissionRequiredMixin, View):
-    permission_required = 'survey.can_view_results'
+class SurveyResultsView(View):
 
     def get_object(self):
         self.obj = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
         return self.obj
 
-    def get(self, request):
+    def get(self, request, survey_id):
+        self.obj = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
         questions = []
         for question in self.obj.questions.all():
             question_vm = QuestionViewModel(question.text)
@@ -252,8 +252,10 @@ class SurveyResultsView(PermissionRequiredMixin, View):
     def post(self, request, survey_id):
         if 'delete' in request.POST:
             survey = self.get_object()
-            request.user.points += survey.allocated_points
-            request.user.save()
+            if survey.allocated_points > 0:
+                request.user.points += survey.allocated_points
+                request.user.save()
+            survey = Survey.objects.get(id=survey_id)
             survey.delete()
             return redirect('profile')
         survey = get_object_or_404(Survey, id=survey_id)

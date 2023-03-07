@@ -1,23 +1,4 @@
 {% extends 'survey/base.html' %}
-{% load static %}
-
-<style>
-
-  section {
-      padding: 50px 0;
-  }
-
-  .title {
-      font-size: 4rem;
-      font-weight: bold;
-      text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
-  }
-
-</style>
-
-
 
 {% block content %}
 
@@ -37,14 +18,9 @@
                     {{ choice.1 }}
                   </label>
                 {% endfor %}
-                {% elif field.field.widget.input_type == 'text' %}
-                <div class="field">
-                  <div class="control">
-                    <textarea name="{{ field.name }}" class="textarea" placeholder="Write your answer here..." rows="4" cols="50"></textarea>
-                  </div>
-                </div>
+              {% elif field.field.widget.input_type == 'text' %}
+                <textarea name="{{ field.name }}" rows="4" cols="50"></textarea>
               {% endif %}
-              
             </div>
           </div>
         {% endfor %}

@@ -1,10 +1,12 @@
 # forms.py
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+class LoginForm(AuthenticationForm):
+    remember_me = forms.BooleanField(required=False)
 
 class SurveyResponseForm(forms.Form):
     def __init__(self, *args, **kwargs):
