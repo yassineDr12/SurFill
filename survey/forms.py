@@ -14,16 +14,16 @@ class SurveyResponseForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         for question in questions:
-            if question.choices.exists():
+            if question.istext == True:
+                self.fields[f'question_{question.id}'] = forms.CharField(
+                    label=question.text,
+                    widget=forms.TextInput(attrs={'class': 'input'})
+                )
+            else:
                 self.fields[f'question_{question.id}'] = forms.ChoiceField(
                     label=question.text,
                     choices=[(c.id, c.text) for c in question.choices.all()],
                     widget=forms.RadioSelect
-                )
-            else:
-                self.fields[f'question_{question.id}'] = forms.CharField(
-                    label=question.text,
-                    widget=forms.TextInput(attrs={'class': 'input'})
                 )
 
                     

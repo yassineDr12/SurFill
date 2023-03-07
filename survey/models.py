@@ -36,6 +36,7 @@ class Survey(models.Model):
 
 class Question(models.Model):
     text = models.TextField()
+    istext = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     survey = models.ForeignKey(
@@ -45,6 +46,7 @@ class Question(models.Model):
         blank=True,
         related_name='questions'
     )
+
     def __str__(self):
         return f"Question({self.id}): {self.text} - {self.survey}" 
 

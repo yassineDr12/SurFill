@@ -16,6 +16,7 @@ from django.utils.encoding import force_bytes, force_str
 from datetime import datetime
 
 from django.views import View
+import pandas as pd
 
 from .models import Survey, Question, Choice, SurveyResponse
 from .tokens import user_tokenizer
@@ -69,7 +70,7 @@ def fill_survey(request, survey_id):
                 if question.startswith('question_'):
                     question_id = question.replace('question_', '')
                     question = Question.objects.get(id=question_id)
-                    if isinstance(choice_id, str):
+                    if question.istext:
                         choice = Choice.objects.create(text=choice_id, question_id=question_id)
                     else:    
                         choice = Choice.objects.get(id=choice_id)
@@ -195,8 +196,12 @@ class SurveyCreateView(LoginRequiredMixin, View):
         for question_json in questions_json:
             question_data = json.loads(question_json)
             question = Question.objects.create(text=question_data['text'], survey=survey)
-            for choice_data in question_data['choices']:
-                Choice.objects.create(text=choice_data['text'], question=question)
+            if not question_data['choices']:
+                question.istext = True
+                question.save()
+            else:
+                for choice_data in question_data['choices']:
+                    Choice.objects.create(text=choice_data['text'], question=question)
 
         return redirect(reverse('profile'))
 
@@ -250,6 +255,26 @@ class SurveyResultsView(View):
         return render(request, 'survey/survey_results.html', context)
 
     def post(self, request, survey_id):
+        if 'download' in request.POST:
+            self.obj = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+            questions = []
+            for question in self.obj.questions.all():
+                question_vm = QuestionViewModel(question.text)
+                for choice in question.choices.all():
+                    question_vm.choices.append(ChoiceResultViewModel(choice.id, choice.text))
+                
+                for survey_response in SurveyResponse.objects.filter(question=question):
+                    question_vm.add_survey_response(survey_response)
+                
+                questions.append(question_vm)
+
+            for question in questions:
+                print(question.text)
+                for choice in question.choices:
+                    print(choice.text, choice.responses)
+                print()
+            return export_survey_results(self.obj, questions)
+
         if 'delete' in request.POST:
             survey = self.get_object()
             if survey.allocated_points > 0:
@@ -300,3 +325,20 @@ class ConfirmRegistrationView(View):
             context['message'] = 'Registration complete. Please login'
 
         return render(request, 'survey/login.html', context)
+
+def export_survey_results(survey, questions):
+
+    answers_list = []
+    for question in questions:
+        answers = [choice.text for choice in question.choices]
+        answers_list.append(answers)
+
+    question_texts = [question.text for question in questions]
+
+    df = pd.DataFrame(data=answers_list, columns=question_texts).T
+    #df.columns = question_texts
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    title = survey.title + "_surveyResults.xlsx"
+    response['Content-Disposition'] = f'attachment; filename="{title}"'
+    df.to_excel(response, index=False)
+    return response

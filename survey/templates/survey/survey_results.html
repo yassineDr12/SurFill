@@ -82,7 +82,7 @@ table {
 
 {% block content %}
 
-<div class="container">\<br><br>
+<div class="container"><br><br>
   <h2 class="subtitle has-text-centered">
     Results for Survey: {{ survey.title }}<br>{{ survey.allocated_points }} point(s) allocated
   </h2>
@@ -124,18 +124,21 @@ table {
 
           <form method="post" action="{% url 'survey_results' survey.id %}">
             {% csrf_token %}
+
             <div class="field">
               <label class="label">Allocate More Points ({{ request.user.points }} points max):</label>
               <div class="control">
                 <input class="input" type="number" name="points" min="0" max ="{{ request.user.points }}" value="0">
               </div>
             </div>
+
             <div class="field">
               <div class="control">
                 <button type="submit" class="button is-primary">Allocate</button>
                 {% csrf_token %}
                 <input type="submit" class="button is-danger" name="delete" value="Delete Survey">
-
+                <button type="button" class="button is-info" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'fill_survey' survey.id %}')">Copy Link</button>
+                <input type="submit" class="button is-danger" name="download" value="Download results.xlsx">
               </div>
             </div>
           </form>
@@ -145,5 +148,17 @@ table {
   </div>
 
 </section>
+
+<script>
+   function copyToClipboard(text) {
+  var dummy = document.createElement("textarea");
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+  alert('Link copied to clipboard!');
+  }
+</script>
 
 {% endblock %}

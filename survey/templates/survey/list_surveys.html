@@ -1,9 +1,24 @@
+<style>
+  .title {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 30px;
+  }
+
+  .subtitle {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 30px;
+  }
+</style>
 {% extends 'survey/base.html' %}
 
 {% block content %}
   <section class="section">
     <div class="container">
-      <h1 class="title has-text-success">Available Surveys</h1>
+      <h1 class="title ">Available Surveys</h1>
 
       {% if surveys %}
         <ul>

@@ -219,7 +219,7 @@
                       <label :for="'choice_' + choice.id" class="label">
                       </label>
                       <div class="control is-expanded">
-                        <input type="text" class="input" v-model="choice.text">
+                        <input type="text" class="input" v-model="choice.text" placeholder="Leave empty for text input">
                       </div>
                       <div class="control">
                         <a @click.stop="removeChoice(question, choice)" class="button is-danger">

@@ -1,16 +1,12 @@
 <!-- base.html -->
 {% load static %}
 <style>
-  .hero.is-success {
-    background-image: url("{% static 'background.jpg' %}");
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-
+  
   body {
     background-image: url("{% static 'background.jpg' %}");
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed;
   }
 
   nav.navbar {
