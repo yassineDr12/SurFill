@@ -155,6 +155,12 @@ STATIC_URL = "static/"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # custom
 LOGOUT_REDIRECT_URL='/login/'

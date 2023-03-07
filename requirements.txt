@@ -14,6 +14,7 @@ django-extensions==3.2.1
 django-guardian==2.4.0
 django-heroku==0.3.1
 django-js-asset==2.0.0
+django-storages==1.13.2
 django-widget-tweaks==1.4.12
 django_debug_toolbar==3.8.1
 filelock==3.9.0
