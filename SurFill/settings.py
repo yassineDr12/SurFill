@@ -28,7 +28,10 @@ else:
     ALLOWED_HOSTS = []
 
 if not IS_HEROKU:
+    SITE_ID = 1
     DEBUG = True
+else:
+    SITE_ID = 2    
 
 
 # Application definition
@@ -48,8 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'microsoft_auth',
 ]
-
-SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
