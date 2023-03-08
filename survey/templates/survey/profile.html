@@ -21,10 +21,11 @@
             <ul>
               {% for survey in surveys %}
               <li>
-                <a class="box" href="{% url 'survey_results' survey.id %}">{{ survey.title }}</a>
-                {% if survey.expired %}
-                <span class="tag is-danger is-light">Expired</span>
-                {% endif %}
+                <a class="box" href="{% url 'survey_results' survey.id %}">{{ survey.title }}
+                  {% if survey.expired %}
+                  <span class="tag is-danger is-light">Expired</span>
+                  {% endif %}
+                </a>
               </li><br>
               {% endfor %}
             </ul>

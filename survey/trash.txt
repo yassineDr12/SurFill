@@ -1,0 +1,26 @@
+def export_survey_results(survey, questions):
+    wb = openpyxl.Workbook()
+    
+    # iterate over each question
+    for question in questions:
+        # create a new sheet with the question text as the title
+        sheet = wb.create_sheet(title=question.text)
+        
+        # add the table headers
+        sheet['A1'] = 'Answer'
+        sheet['B1'] = 'No.'
+        
+        # iterate over each choice and add it to the sheet
+        for index, choice in enumerate(question.choices):
+            sheet.cell(row=index+2, column=1, value=choice.text)
+            sheet.cell(row=index+2, column=2, value=choice.responses)
+    
+    first_sheet = wb.sheetnames[0]
+    wb.remove(wb[first_sheet])
+
+    # create a response object with the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    title = survey.title + " SurveyResults.xlsx"
+    response['Content-Disposition'] = f'attachment; filename="{title}"'
+    wb.save(response)
+    return response

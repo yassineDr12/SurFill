@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'guardian',
     'social_django',
+    'django.contrib.sites',
+    'microsoft_auth',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,6 +72,7 @@ AUTHENTICATION_BACKENDS = [
   'social_core.backends.google.GoogleOAuth2',
   'django.contrib.auth.backends.ModelBackend',
   'guardian.backends.ObjectPermissionBackend',
+  'microsoft_auth.backends.MicrosoftAuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'SurFill.urls'
@@ -85,6 +90,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'microsoft_auth.context_processors.microsoft',
             ],
         },
     },
@@ -173,6 +179,12 @@ LOGIN_ERROR_URL = '/login/'
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
+MICROSOFT_AUTH_CLIENT_ID = 'b9d21a36-a61f-4af0-b252-fb7a811c6131'
+MICROSOFT_AUTH_CLIENT_SECRET = 'ZNn8Q~Imj3gwn_RZHOAXlaLldii21PsYIVsxma4H'
+# Tenant ID is also needed for single tenant applications
+#MICROSOFT_AUTH_TENANT_ID = '7025e04c-70ca-48bf-ab7b-73954cb846ad'
+MICROSOFT_AUTH_LOGIN_TYPE = 'ma'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',

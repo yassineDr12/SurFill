@@ -33,5 +33,5 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'group_name', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'group_name', 'password1', 'password2')
 

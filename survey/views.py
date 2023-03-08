@@ -17,6 +17,7 @@ from datetime import datetime
 
 from django.views import View
 import pandas as pd
+import openpyxl
 
 from .models import Survey, Question, Choice, SurveyResponse
 from .tokens import user_tokenizer
@@ -327,18 +328,29 @@ class ConfirmRegistrationView(View):
         return render(request, 'survey/login.html', context)
 
 def export_survey_results(survey, questions):
+    wb = openpyxl.Workbook()
+    
+    # iterate over each question
+    for question in survey.questions.all():
+        # create a new sheet with the question text as the title
+        sheet = wb.create_sheet(title=question.text)
+        
+        # add the table headers
+        sheet['A1'] = 'Answer'
+        sheet['B1'] = 'Responder'
+        
+        # iterate over each response and add it to the sheet
+        for index, response in enumerate(question.question_responses.all()):
+            sheet.cell(row=index+2, column=1, value=response.choice.text)
+            sheet.cell(row=index+2, column=2, value=response.created_by.get_info())
 
-    answers_list = []
-    for question in questions:
-        answers = [choice.text for choice in question.choices]
-        answers_list.append(answers)
+    
+    first_sheet = wb.sheetnames[0]
+    wb.remove(wb[first_sheet])
 
-    question_texts = [question.text for question in questions]
-
-    df = pd.DataFrame(data=answers_list, columns=question_texts).T
-    #df.columns = question_texts
-    response = HttpResponse(content_type='application/vnd.ms-excel')
-    title = survey.title + "_surveyResults.xlsx"
+    # create a response object with the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    title = survey.title + " SurveyResults.xlsx"
     response['Content-Disposition'] = f'attachment; filename="{title}"'
-    df.to_excel(response, index=False)
+    wb.save(response)
     return response

@@ -17,9 +17,31 @@
             Register
           </h2>
           {% load widget_tweaks %}
-
+    
           <form action="{% url 'register' %}" method="POST" class="box" autocomplete="off">
             {% csrf_token %}
+          
+            <div class="field">
+              <label for="{{ form.first_name.id_for_label }}" class="label">
+                <span class="icon is-small"><i class="fas fa-user"></i></span>
+                First Name
+              </label>
+              <div class="control">
+                {{ form.first_name|add_class:"input" }}
+              </div>
+              <p class="help is-danger">{{ form.first_name.errors }}</p>
+            </div>
+    
+            <div class="field">
+              <label for="{{ form.last_name.id_for_label }}" class="label">
+                <span class="icon is-small"><i class="fas fa-user"></i></span>
+                Last Name
+              </label>
+              <div class="control">
+                {{ form.last_name|add_class:"input" }}
+              </div>
+              <p class="help is-danger">{{ form.last_name.errors }}</p>
+            </div>
           
             <div class="field">
               <label for="{{ form.username.id_for_label }}" class="label">

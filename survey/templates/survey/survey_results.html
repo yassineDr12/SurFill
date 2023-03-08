@@ -99,7 +99,7 @@ table {
         <ol class="question-list">
           {% for question in questions %}
           <li class="question-item">
-            <p class="question-text">{{ question.text }}</p>
+            <p class="question-text">Question: {{ question.text }}</p>
             <div class="choice-table-container">
               <table class='table choice-table'>
                 <thead>
@@ -137,7 +137,7 @@ table {
                 <button type="submit" class="button is-primary">Allocate</button>
                 {% csrf_token %}
                 <input type="submit" class="button is-danger" name="delete" value="Delete Survey">
-                <button type="button" class="button is-info" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'fill_survey' survey.id %}')">Copy Link</button>
+                <button type="button" class="button is-info" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'fill_survey' survey.id %}')">Copy Survey Link</button>
                 <input type="submit" class="button is-danger" name="download" value="Download results.xlsx">
               </div>
             </div>
