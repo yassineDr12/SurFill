@@ -126,15 +126,16 @@ table {
             {% csrf_token %}
 
             <div class="field">
-              <label class="label">Allocate More Points ({{ request.user.points }} points max):</label>
+              <label class="label">Allocated Points (-{{ survey.allocated_points }} to {{ request.user.points }} points):</label>
               <div class="control">
-                <input class="input" type="number" name="points" min="0" max ="{{ request.user.points }}" value="0">
+                <input class="input" type="number" name="points" 
+                min="-{{ request.user.points }}" max ="{{ request.user.points }}" value="0">
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <button type="submit" class="button is-primary">Allocate</button>
+                <button type="submit" class="button is-primary">Update</button>
                 {% csrf_token %}
                 <input type="submit" class="button is-danger" name="delete" value="Delete Survey">
                 <button type="button" class="button is-info" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'fill_survey' survey.id %}')">Copy Survey Link</button>

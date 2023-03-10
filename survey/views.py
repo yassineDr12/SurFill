@@ -292,6 +292,12 @@ class SurveyResultsView(View):
             request.user.points -= int(points)
             request.user.save()
             return redirect('profile') 
+        elif points != 0:
+            survey.allocated_points -= abs(points)
+            survey.save()
+            request.user.points += abs(int(points))
+            request.user.save()
+            return redirect('profile')
         return redirect('survey_results', survey_id=survey_id)    
 
 
