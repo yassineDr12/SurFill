@@ -25,7 +25,7 @@ class CustomUser(AbstractUser):
  
 class Survey(models.Model):
     title = models.CharField(max_length=200)
-    group_name_required =  models.BooleanField(default=False)
+    group_name_required = models.BooleanField(default=False)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
