@@ -352,7 +352,7 @@ def export_survey_results(survey, questions):
         # iterate over each response and add it to the sheet
         for index, response in enumerate(question.question_responses.all()):
             sheet.cell(row=index+2, column=1, value=response.choice.text)
-            if response.is_anonymous == True:
+            if response.is_anonymous != True:
                 sheet.cell(row=index+2, column=2, value=(response.created_by.get_email()))
                 sheet.cell(row=index+2, column=3, value=(response.created_by.get_username()))
                 sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
