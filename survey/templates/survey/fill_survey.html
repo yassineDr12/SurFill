@@ -48,19 +48,24 @@
       {% endfor %}
 
       <div class="box">
+        <h2 class="subtitle">Group</h2>
+        <div class="control">
+          <div class="field">
+            <input type="text" name="group" class="input" placeholder="Enter your group name...">
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
         <h2 class="subtitle">Anonymous response</h2>
         <div class="control">
           <label class="checkbox">
             <input type="checkbox" name="anonymous" value="True">
             Check this box to fill out the survey anonymously
           </label>
-          <div class="field">
-            <div class="control">
-              <textarea name="group" class="textarea" placeholder="Enter the name of your group here..." rows="4" cols="50"></textarea>
-            </div>
-          </div>
         </div>
       </div>
+
 
       <button type="submit" class="button is-success">Submit</button>
     </form>
