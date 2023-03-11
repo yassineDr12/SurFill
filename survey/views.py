@@ -77,7 +77,8 @@ def fill_survey(request, survey_id):
                         choice = Choice.objects.get(id=choice_id)
                     if request.user.is_authenticated:
                         user = request.user
-                        SurveyResponse.objects.create(question_id=question_id, choice=choice, created_by=user)
+                        is_anonymous = request.POST.get('anonymous') == 'anonymous'
+                        SurveyResponse.objects.create(is_anonymous=is_anonymous, question_id=question_id, choice=choice, created_by=user)
                     else:
                         SurveyResponse.objects.create(question_id=question_id, choice=choice)   
             if request.user.is_authenticated:             
@@ -351,10 +352,10 @@ def export_survey_results(survey, questions):
         # iterate over each response and add it to the sheet
         for index, response in enumerate(question.question_responses.all()):
             sheet.cell(row=index+2, column=1, value=response.choice.text)
-
-            sheet.cell(row=index+2, column=2, value=(response.created_by.get_email()))
-            sheet.cell(row=index+2, column=3, value=(response.created_by.get_username()))
-            sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
+            if response.is_anonymous == False:
+                sheet.cell(row=index+2, column=2, value=(response.created_by.get_email()))
+                sheet.cell(row=index+2, column=3, value=(response.created_by.get_username()))
+                sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
 
     
     first_sheet = wb.sheetnames[0]

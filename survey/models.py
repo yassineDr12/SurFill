@@ -82,6 +82,7 @@ class Choice(models.Model):
 class SurveyResponse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_anonymous = models.BooleanField(default=False)
     question = models.ForeignKey(
         Question, 
         on_delete=models.CASCADE,

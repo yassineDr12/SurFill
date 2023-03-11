@@ -21,35 +21,41 @@
 
 {% block content %}
 
-  <section class="section">
-    <div class="container">
-      <h1 class="title">{{ survey.title }}</h1>
-      <form method="post">
-        {% csrf_token %}
-        {% for field in form %}
-          <div class="box">
-            <h2 class="subtitle">{{ field.label_tag }}</h2>
-            <div class="control">
-              {% if field.field.widget.input_type == 'radio' %}
-                {% for choice in field.field.choices %}
-                  <label class="radio">
-                    <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}">
-                    {{ choice.1 }}
-                  </label>
-                {% endfor %}
-                {% elif field.field.widget.input_type == 'text' %}
-                <div class="field">
-                  <div class="control">
-                    <textarea name="{{ field.name }}" class="textarea" placeholder="Type your answer here..." rows="4" cols="50"></textarea>
-                  </div>
+<section class="section">
+  <div class="container">
+    <h1 class="title">{{ survey.title }}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="box">
+          <h2 class="subtitle">{{ field.label_tag }}</h2>
+          <div class="control">
+            {% if field.field.widget.input_type == 'radio' %}
+              {% for choice in field.field.choices %}
+                <label class="radio">
+                  <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}">
+                  {{ choice.1 }}
+                </label>
+              {% endfor %}
+              {% elif field.field.widget.input_type == 'text' %}
+              <div class="field">
+                <div class="control">
+                  <textarea name="{{ field.name }}" class="textarea" placeholder="Type your answer here..." rows="4" cols="50"></textarea>
                 </div>
-              {% endif %}
-              
-            </div>
-          </div>
-        {% endfor %}
-        <button type="submit" class="button is-success">Submit</button>
-      </form>
+              </div>
+              {% elif field.field.widget.input_type == 'checkbox' %}
+              <div class="field">
+                <div class="control">
+                  <input type="checkbox" name="{{ field.name }}" value="anonymous">
+                  <label for="{{ field.id_for_label }}">Fill out anonymously</label>
+                </div>
+              </div>
+            {% endif %}
+      </div>
     </div>
-  </section>
+  {% endfor %}
+  <button type="submit" class="button is-success">Submit</button>
+</form>
+</div>
+</section>
 {% endblock %}
