@@ -8,10 +8,10 @@ from django.conf import settings
 
 class CustomUser(AbstractUser):
     points = models.IntegerField(default=0)
-    group_name = models.TextField(null=True, default=None)
+    group_name = models.TextField(null=True, default="Not provided")
 
     def get_info(self):
-        return f"{self.first_name} {self.last_name} From:{self.group_name}"
+        return f"{self.first_name} {self.last_name} Group:{self.group_name}"
  
  
 class Survey(models.Model):

@@ -1,0 +1,49 @@
+/* Center the title */
+.title {
+  text-align: center;
+}
+
+/* Add some space between questions */
+li {
+  padding-bottom: 25px;
+}
+
+/* Add some margin to the table */
+table {
+  margin-left: 30px;
+}
+
+/* Style the table headers */
+th {
+  font-weight: bold;
+}
+
+/* Style the input field */
+.input {
+  width: 50%;
+  margin-top: 10px;
+}
+
+/* Style the buttons */
+.button {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+.button.is-primary {
+  background-color: #3273dc;
+  color: #fff;
+  border: none;
+}
+.button.is-primary:hover {
+  background-color: #276cdb;
+  cursor: pointer;
+}
+.button.is-danger {
+  background-color: #f14668;
+  color: #fff;
+  border: none;
+}
+.button.is-danger:hover {
+  background-color: #e9003c;
+  cursor: pointer;
+}
