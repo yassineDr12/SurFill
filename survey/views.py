@@ -77,7 +77,7 @@ def fill_survey(request, survey_id):
                         choice = Choice.objects.get(id=choice_id)
                     if request.user.is_authenticated:
                         user = request.user
-                        is_anonymous = request.POST.get('anonymous') == 'anonymous'
+                        is_anonymous = request.POST.get('anonymous') == 'True'
                         SurveyResponse.objects.create(is_anonymous=is_anonymous, question_id=question_id, choice=choice, created_by=user)
                     else:
                         SurveyResponse.objects.create(question_id=question_id, choice=choice)   
