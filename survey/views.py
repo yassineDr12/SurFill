@@ -343,12 +343,18 @@ def export_survey_results(survey, questions):
         
         # add the table headers
         sheet['A1'] = 'Answer'
-        sheet['B1'] = 'Responder'
+        sheet['B1'] = 'Email'
+        sheet['C1'] = 'Username'
+        sheet['D1'] = 'Group'
+        
         
         # iterate over each response and add it to the sheet
         for index, response in enumerate(question.question_responses.all()):
             sheet.cell(row=index+2, column=1, value=response.choice.text)
-            sheet.cell(row=index+2, column=2, value=(response.created_by.get_info())
+
+            sheet.cell(row=index+2, column=2, value=(response.created_by.get_email()))
+            sheet.cell(row=index+2, column=3, value=(response.created_by.get_username()))
+            sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
 
     
     first_sheet = wb.sheetnames[0]

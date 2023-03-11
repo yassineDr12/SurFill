@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
         
         return f"{self.email}"
 
-    def username(self):
+    def get_username(self):
 
         return f"{self.username}"
 
