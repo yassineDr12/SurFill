@@ -83,6 +83,8 @@ def fill_survey(request, survey_id):
                         SurveyResponse.objects.create(question_id=question_id, choice=choice)   
             if request.user.is_authenticated:             
                 user.points += 1
+                if request.POST.get("group") != "":
+                    user.group_name = request.POST.get("group")
                 user.save()
                 survey.save()
             survey.allocated_points -= 1    
