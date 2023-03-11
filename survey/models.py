@@ -19,7 +19,8 @@ class CustomUser(AbstractUser):
         return f"{self.username}"
 
     def get_group(self):
-        if self.group_name == ''
+        if self.group_name == '':
+            return ""
         return f"{self.group_name}"
  
 class Survey(models.Model):
