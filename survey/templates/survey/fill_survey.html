@@ -47,6 +47,7 @@
         </div>
       {% endfor %}
 
+      {% if survey.group_name_required == True %}
       <div class="box">
         <h2 class="subtitle">Group</h2>
         <div class="control">
@@ -55,6 +56,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
 
       <div class="box">
         <h2 class="subtitle">Anonymous response</h2>

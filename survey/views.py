@@ -192,9 +192,14 @@ class SurveyCreateView(LoginRequiredMixin, View):
         if not valid:
             context['users'] = User.objects.all()
             return render(request, 'survey/create_survey.html', context)
-            
-        survey = Survey.objects.create(title=title, created_by=request.user, 
+
+        if request.POST.get('group') == 'True':
+            survey = Survey.objects.create(group_name_required= True, title=title, created_by=request.user, 
+                                        deadline = deadline, allocated_points=allocated_points)
+        else:
+            survey = Survey.objects.create(title=title, created_by=request.user, 
                                        deadline = deadline, allocated_points=allocated_points)
+
         request.user.points -= int(allocated_points)
         request.user.save()                               
         for question_json in questions_json:
