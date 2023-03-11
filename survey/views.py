@@ -356,8 +356,10 @@ def export_survey_results(survey, questions):
                 sheet.cell(row=index+2, column=2, value=(response.created_by.get_email()))
                 sheet.cell(row=index+2, column=3, value=(response.created_by.get_username()))
                 sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
-                print(response.is_anonymous)
-
+            else:
+                sheet.cell(row=index+2, column=2, value=("Anonymous")
+                sheet.cell(row=index+2, column=3, value=("Anonymous")
+                sheet.cell(row=index+2, column=4, value=("")
     
     first_sheet = wb.sheetnames[0]
     wb.remove(wb[first_sheet])
