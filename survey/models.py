@@ -10,9 +10,17 @@ class CustomUser(AbstractUser):
     points = models.IntegerField(default=0)
     group_name = models.TextField(null=True, default="Not provided")
 
-    def get_info(self):
-        return f"{self.first_name} {self.last_name} Group:{self.group_name}"
- 
+    def get_email(self):
+        
+        return f"{self.email}"
+
+    def username(self):
+
+        return f"{self.username}"
+
+    def get_group(self):
+
+        return f"{self.group_name}"
  
 class Survey(models.Model):
     title = models.CharField(max_length=200)

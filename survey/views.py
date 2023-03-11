@@ -348,7 +348,7 @@ def export_survey_results(survey, questions):
         # iterate over each response and add it to the sheet
         for index, response in enumerate(question.question_responses.all()):
             sheet.cell(row=index+2, column=1, value=response.choice.text)
-            sheet.cell(row=index+2, column=2, value=response.created_by.get_info())
+            sheet.cell(row=index+2, column=2, value=(response.created_by.get_info())
 
     
     first_sheet = wb.sheetnames[0]
