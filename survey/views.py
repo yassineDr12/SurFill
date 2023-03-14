@@ -86,8 +86,8 @@ def fill_survey(request, survey_id):
                 if request.POST.get("group") != "":
                     user.group_name = request.POST.get("group")
                 user.save()
-                survey.save()
-            survey.allocated_points -= 1    
+            survey.allocated_points -= 1  
+            survey.save()  
             return HttpResponseRedirect(reverse('survey_submitted'))
 
     context = {
@@ -362,11 +362,10 @@ def export_survey_results(survey, questions):
             if response.is_anonymous != True:
                 sheet.cell(row=index+2, column=2, value=(response.created_by.get_email()))
                 sheet.cell(row=index+2, column=3, value=(response.created_by.get_username()))
-                sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
             else:
                 sheet.cell(row=index+2, column=2, value=("Anonymous"))
                 sheet.cell(row=index+2, column=3, value=("Anonymous"))
-                sheet.cell(row=index+2, column=4, value=(""))
+            sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
     
     first_sheet = wb.sheetnames[0]
     wb.remove(wb[first_sheet])
