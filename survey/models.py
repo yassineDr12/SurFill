@@ -25,7 +25,6 @@ class CustomUser(AbstractUser):
  
 class Survey(models.Model):
     title = models.CharField(max_length=200)
-    group_name_required = models.BooleanField(default=False)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -38,6 +37,7 @@ class Survey(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     allocated_points = models.IntegerField(default=0)
     expired = models.BooleanField(default=False)
+    responder_info_required= models.BooleanField(default=True)
     
     def __str__(self):
         return f"Survey({self.id}): {self.title}"

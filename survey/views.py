@@ -16,8 +16,8 @@ from django.utils.encoding import force_bytes, force_str
 from datetime import datetime
 
 from django.views import View
-import pandas as pd
 import openpyxl
+from openpyxl.utils import get_column_letter
 
 from .models import Survey, Question, Choice, SurveyResponse
 from .tokens import user_tokenizer
@@ -77,8 +77,10 @@ def fill_survey(request, survey_id):
                         choice = Choice.objects.get(id=choice_id)
                     if request.user.is_authenticated:
                         user = request.user
-                        is_anonymous = request.POST.get('anonymous') == 'True'
-                        SurveyResponse.objects.create(is_anonymous=is_anonymous, question_id=question_id, choice=choice, created_by=user)
+                        if request.POST.get('anonymous') == 'True':
+                            SurveyResponse.objects.create(is_anonymous=True, question_id=question_id, choice=choice, created_by=user)
+                        else:
+                            SurveyResponse.objects.create(question_id=question_id, choice=choice, created_by=user)    
                     else:
                         SurveyResponse.objects.create(question_id=question_id, choice=choice)   
             if request.user.is_authenticated:             
@@ -193,8 +195,8 @@ class SurveyCreateView(LoginRequiredMixin, View):
             context['users'] = User.objects.all()
             return render(request, 'survey/create_survey.html', context)
 
-        if request.POST.get('group') == 'True':
-            survey = Survey.objects.create(group_name_required= True, title=title, created_by=request.user, 
+        if request.POST.get('anonymous') == 'True':
+            survey = Survey.objects.create(responder_info_required= False, title=title, created_by=request.user, 
                                         deadline = deadline, allocated_points=allocated_points)
         else:
             survey = Survey.objects.create(title=title, created_by=request.user, 
@@ -366,6 +368,12 @@ def export_survey_results(survey, questions):
                 sheet.cell(row=index+2, column=2, value=("Anonymous"))
                 sheet.cell(row=index+2, column=3, value=("Anonymous"))
             sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
+
+        sheet.column_dimensions[get_column_letter(1)].width = 100
+        sheet.column_dimensions[get_column_letter(2)].width = 30
+        sheet.column_dimensions[get_column_letter(3)].width = 30
+        sheet.column_dimensions[get_column_letter(4)].width = 30
+        
     
     first_sheet = wb.sheetnames[0]
     wb.remove(wb[first_sheet])
