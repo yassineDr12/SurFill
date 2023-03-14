@@ -86,8 +86,8 @@ def fill_survey(request, survey_id):
                 if request.POST.get("group") != "":
                     user.group_name = request.POST.get("group")
                 user.save()
-            survey.allocated_points -= 1  
-            survey.save()  
+            survey.allocated_points -= 1    
+            survey.save()
             return HttpResponseRedirect(reverse('survey_submitted'))
 
     context = {
