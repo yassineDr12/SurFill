@@ -349,7 +349,7 @@ def export_survey_results(survey, questions):
     # iterate over each question
     for question in survey.questions.all():
         # create a new sheet with the question text as the title
-        sheet = wb.create_sheet(title=question.text)
+        sheet = wb.create_sheet(title=str(question.text).replace("?", ""))
         
         # add the table headers
         sheet['A1'] = 'Answer'
@@ -369,7 +369,7 @@ def export_survey_results(survey, questions):
                 sheet.cell(row=index+2, column=3, value=("Anonymous"))
             sheet.cell(row=index+2, column=4, value=(response.created_by.get_group()))
 
-        sheet.column_dimensions[get_column_letter(1)].width = 100
+        sheet.column_dimensions[get_column_letter(1)].width = 50
         sheet.column_dimensions[get_column_letter(2)].width = 30
         sheet.column_dimensions[get_column_letter(3)].width = 30
         sheet.column_dimensions[get_column_letter(4)].width = 30

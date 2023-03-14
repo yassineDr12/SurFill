@@ -31,10 +31,12 @@
           <div class="control">
             {% if field.field.widget.input_type == 'radio' %}
               {% for choice in field.field.choices %}
-                <label class="radio">
-                  <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}">
-                  {{ choice.1 }}
-                </label>
+                <div class="box">
+                  <label class="radio">
+                      <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}">
+                      {{ choice.1 }}
+                  </label>
+                </div>
               {% endfor %}
             {% elif field.field.widget.input_type == 'text' %}
               <div class="field">
