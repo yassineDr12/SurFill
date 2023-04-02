@@ -140,7 +140,7 @@
           Edit {{ survey.title }}
         </h2>
 
-        <form action="{% url 'edit_survey' survey.id %}" id="survey-form" method="POST">
+        <form onsubmit="return confirm('Warning: all responses will be lost. Are you sure you want to proceed ?')" action="{% url 'edit_survey' survey.id %}" id="survey-form" method="POST">
           {% csrf_token %}
           <div class="field">
             <label for="title" class="label">
