@@ -15,4 +15,6 @@ urlpatterns = [
   path('survey-expired', views.survey_expired, name='survey_expired'),
   path('surveys/create/', views.SurveyCreateView.as_view(), name='survey_create'),
   path('survey-results/<int:survey_id>/', views.SurveyResultsView.as_view(), name='survey_results'),
+  path('surveys/edit/<int:survey_id>/', views.SurveyEditView.as_view(), name='edit_survey')
+
 ]

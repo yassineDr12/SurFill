@@ -10,9 +10,11 @@ from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.shortcuts import render, redirect, reverse, get_object_or_404, render
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
+from django.contrib import messages
+
 from datetime import datetime
 
 from django.views import View
@@ -153,14 +155,81 @@ class LoginView(View):
 
 class ProfileView(LoginRequiredMixin, View):
 
-    update_surveys()
-
     def get(self, request):
         surveys = Survey.objects.filter(created_by=request.user)
 
         context = {'surveys': surveys}
-
+        update_surveys()
         return render(request, 'survey/profile.html', context)
+
+
+class SurveyEditView(LoginRequiredMixin, View):
+    
+    def get(self, request, survey_id):
+        survey = get_object_or_404(Survey, id=survey_id)
+        context = {'survey': survey}
+        return render(request, 'survey/edit_survey.html', context)
+
+    def post(self, request, survey_id):
+
+        oldsurvey = get_object_or_404(Survey, pk=survey_id)
+        data = request.POST
+        print(data.get('anonymous'))
+        
+        title = data.get('title')
+        questions_json = data.getlist('questions')
+        deadline = data.get('deadline')
+        allocated_points = data.get('points')
+
+        if allocated_points == '':
+            allocated_points = 0
+
+        valid = True
+        context = {'survey': oldsurvey}
+
+        if not title:
+            valid = False
+            context['title_error'] = 'title is required'
+
+        if not deadline:
+            valid = False
+            context['deadline_error'] = 'deadline is required' 
+
+        if not questions_json:
+            valid = False
+            context['questions_error'] = 'questions are required'
+            
+        if not valid:
+            context['users'] = User.objects.all()
+            return render(request, 'survey/edit_survey.html', context)
+
+        if request.POST.get('anonymous') == 'True':
+            survey = Survey.objects.create(responder_info_required= False, title=title, created_by=request.user, created_at = oldsurvey.created_at,
+                                        deadline = deadline, allocated_points=(allocated_points + oldsurvey.allocated_points))
+            oldsurvey.delete()
+
+        else:
+            survey = Survey.objects.create(title=title, created_by=request.user, created_at = oldsurvey.created_at,
+                                       deadline = deadline, allocated_points=(allocated_points + oldsurvey.allocated_points))
+            oldsurvey.delete()                                      
+
+        request.user.points -= int(allocated_points)
+        request.user.save()    
+
+        for question_json in questions_json:
+            question_data = json.loads(question_json)
+            question = Question.objects.create(text=question_data['text'], survey=survey)
+            if not question_data['choices']:
+                question.istext = True
+                question.save()
+            else:
+                for choice_data in question_data['choices']:
+                    Choice.objects.create(text=choice_data['text'], question=question)
+
+
+        # Show success message and redirect to survey list
+        messages.success(request, 'Survey updated successfully!')
+        return redirect('profile')
 
 
 class SurveyCreateView(LoginRequiredMixin, View):
