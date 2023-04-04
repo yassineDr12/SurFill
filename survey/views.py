@@ -48,7 +48,11 @@ def SurveyListview(request):
     surveys = Survey.objects.filter(expired=False)
     user_responses = SurveyResponse.objects.filter(created_by=request.user)
     answered_surveys = [response.question.survey for response in user_responses]
-    unanswered_surveys = surveys.exclude(id__in=[survey.id for survey in answered_surveys if survey])
+    unanswered_surveys = surveys.exclude(
+    id__in=[survey.id for survey in answered_surveys if survey]
+    ).exclude(
+        allocated_points=0
+    )   
     sorted_surveys = sorted(unanswered_surveys, key=lambda survey: survey.priorityValue(), reverse=True)
     context = {'surveys': sorted_surveys}
     return render(request, 'survey/list_surveys.html', context)
