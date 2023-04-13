@@ -132,6 +132,7 @@ table {
                 <button type="button" class="button is-info" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'fill_survey' survey.id %}')">Copy Survey Link</button>
                 <a href="{% url 'edit_survey' survey.id %}" class="button is-warning">Edit Survey</a>
                 <input type="submit" class="button is-danger" name="download" value="Download results.xlsx">
+                <input type="submit" class="button is-danger" name="downloadpdf" value="Download results.pdf">
               </div>
             </div>
           </form>

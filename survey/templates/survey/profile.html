@@ -35,8 +35,10 @@
 
         </ul>
         <div class="box">
-          <h3 class="subtitle">Points So Far: <span class="has-text-weight-bold">{{ request.user.points }}</span></h3>
-        </div>
+          <h3 class="subtitle is-inline-block">Points So Far: <span class="has-text-weight-bold">{{ request.user.points }}</span></h3>
+          <a href="{% url 'share_points' %}" class="button is-warning is-inline-block">Share Points</a>
+          <p class="help is-danger">{{ success }}</p>
+        </div>        
       </div>
     </div>
   </div>

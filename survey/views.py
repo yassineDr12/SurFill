@@ -1,6 +1,9 @@
 # survey/views.py
 
+from io import BytesIO
+import io
 import json
+import os
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
@@ -14,7 +17,6 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404, rende
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib import messages
-
 from datetime import datetime
 
 from django.views import View
@@ -25,6 +27,73 @@ from .models import Survey, Question, Choice, SurveyResponse
 from .tokens import user_tokenizer
 from .forms import RegistrationForm, SurveyResponseForm
 from django.contrib.auth import get_user_model
+
+import io
+from django.http import HttpResponse
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics import renderPDF
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+
+def generate_report(survey):
+    response_data = []
+    
+    for question in survey.questions.all():
+        choices = question.choices.all()
+        total_responses = question.question_responses.count()
+        question_data = []
+        
+        for choice in choices:
+            num_responses = choice.choices_selected.count()
+            if total_responses == 0:
+                percentage = 0
+            else:
+                percentage = num_responses / total_responses * 100
+            
+            question_data.append([choice.text, percentage])
+            
+        response_data.append([question.text, question_data])
+    
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+
+    for question_data in response_data:
+        question_text = question_data[0]
+        choice_data = question_data[1]
+
+        drawing = Drawing(400, 400)
+        pie = Pie()
+        pie.x = 150
+        pie.y = 150
+        pie.width = 100
+        pie.height = 100
+
+        data = []
+        labels = []
+        for choice in choice_data:
+            data.append(choice[1])
+            labels.append(choice[0])
+
+        pie.data = data
+        pie.labels = labels
+        pie.slices.strokeWidth = 0.5
+        pie.slices.popout = 5
+        drawing.add(pie)
+
+        c.drawString(50, 550, question_text)
+        renderPDF.draw(drawing, c, 50, 100)
+
+        c.showPage()
+
+    c.save()
+    buffer.seek(0)
+
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=survey_report.pdf'
+    return response
+
 User = get_user_model()
 
 def update_surveys():
@@ -103,6 +172,41 @@ def fill_survey(request, survey_id):
         'form': form,
     }
     return render(request, 'survey/fill_survey.html', context)
+
+class SharePointsView(View):
+
+    def post(self, request):
+    
+        context = {}
+        username = request.POST.get('username')
+        points = int(request.POST.get('points'))
+        
+        try:
+            receiver = User.objects.get(username=username)
+        except User.DoesNotExist:
+            messages.error(request, 'User does not exist')
+            context['username_error'] = 'User does not exist'
+            return render(request, 'survey/share_points.html', context)
+        
+        sender = request.user
+        if points < 1 or points > sender.points:
+            messages.error(request, 'Invalid points value')
+            context['points_error'] = 'Invalid points value'
+            return render(request, 'survey/share_points.html', context)
+        
+        sender.points -= points
+        receiver.points += points
+        sender.save()
+        receiver.save()
+        
+        messages.success(request, f'Successfully shared {points} points with {receiver.username}')
+        context['success'] = f'Successfully shared {points} points with {receiver.username}'
+        return render(request, 'survey/profile.html', context)
+
+    def get(self, request):
+
+        context = {}
+        return render(request, 'survey/share_points.html', context)
 
 class RegisterView(View):
     def get(self, request):
@@ -328,17 +432,15 @@ class SurveyResultsView(View):
             
             questions.append(question_vm)
 
-        for question in questions:
-            print(question.text)
-            for choice in question.choices:
-                print(choice.text, choice.responses)
-            print()
-
         context = {'survey': self.obj, 'questions': questions}
         
         return render(request, 'survey/survey_results.html', context)
 
     def post(self, request, survey_id):
+        if 'downloadpdf' in request.POST:
+            self.obj = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+            return generate_report(self.obj)
+
         if 'download' in request.POST:
             self.obj = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
             questions = []

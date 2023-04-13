@@ -1,0 +1,75 @@
+<style>
+    body {
+        background-color: #f5f5f5;
+    }
+  
+    section {
+        padding: 50px 0;
+    }
+  
+    .title {
+        font-size: 4rem;
+        font-weight: bold;
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+  
+    .subtitle {
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+  
+    form {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+  
+  .section-title {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+  }
+  </style>
+
+{% extends 'survey/base.html' %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+              <h3 class="subtitle">Share Points:</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                    <label for="username" class="label">Receiver's Username</label>
+                    <div class="control">
+                        <input type="text" class="input" name="username" id="username">
+                    </div>
+                    <p class="help is-danger">{{ username_error }}</p>
+                    </div>
+                    <div class="field">
+                    <label for="points" class="label">No. of points to send (1 to {{ request.user.points }} point(s) max)</label>
+                    <div class="control">
+                        <input type="number" class="input" name="points" id="points" min="1" max="{{ request.user.points }}">
+                    </div>
+                    <p class="help is-danger">{{ points_error }}</p>
+                    </div>
+                    <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Share Points</button>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+     </div>
+</section>
+
+  {% endblock %}
