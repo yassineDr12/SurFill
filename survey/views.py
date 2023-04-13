@@ -35,64 +35,88 @@ from reportlab.graphics.charts.piecharts import Pie
 from reportlab.graphics import renderPDF
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
+from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle
 
 def generate_report(survey):
     response_data = []
     
     for question in survey.questions.all():
-        choices = question.choices.all()
-        total_responses = question.question_responses.count()
-        question_data = []
-        
-        for choice in choices:
-            num_responses = choice.choices_selected.count()
-            if total_responses == 0:
-                percentage = 0
-            else:
-                percentage = num_responses / total_responses * 100
+        if not question.istext:
+            choices = question.choices.all()
+            total_responses = question.question_responses.count()
+            question_data = []
             
-            question_data.append([choice.text, percentage])
-            
-        response_data.append([question.text, question_data])
+            for choice in choices:
+                num_responses = choice.choices_selected.count()
+                if total_responses == 0:
+                    percentage = 0
+                else:
+                    percentage = num_responses / total_responses * 100
+                
+                question_data.append([choice.text, percentage])
+                
+            response_data.append([question.text, question_data])
     
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
-
+    
+    i=0
     for question_data in response_data:
         question_text = question_data[0]
         choice_data = question_data[1]
-
+        
         drawing = Drawing(400, 400)
         pie = Pie()
-        pie.x = 150
-        pie.y = 150
-        pie.width = 100
-        pie.height = 100
-
+        pie.x = 100
+        pie.y = 250-i
+        pie.width = 150
+        pie.height = 150
+        
         data = []
         labels = []
         for choice in choice_data:
             data.append(choice[1])
             labels.append(choice[0])
-
+            
         pie.data = data
         pie.labels = labels
         pie.slices.strokeWidth = 0.5
         pie.slices.popout = 5
         drawing.add(pie)
 
-        c.drawString(50, 550, question_text)
-        renderPDF.draw(drawing, c, 50, 100)
+        # Create a custom legend with corresponding percentages
+        legend_data = []
+        for choice in choice_data:
+            legend_data.append([choice[0], f"{choice[1]:.2f}%"])
 
-        c.showPage()
+        legend_table = Table(legend_data, colWidths=[100, 50])
+        legend_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ]))
+        legend_table.wrapOn(c, 100, 400)
+        legend_table.drawOn(c, 350, 550-(3*i))
 
+        c.drawString(50, 700-(2.5*i), question_text)
+        renderPDF.draw(drawing, c, 50, 250-(2*i))
+        i+=120
+        if i > 121:
+            i=0
+            c.showPage()
+        
     c.save()
     buffer.seek(0)
-
+    
     response = HttpResponse(buffer, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=survey_report.pdf'
+    response['Content-Disposition'] = f'attachment; filename={survey.title}_Results.pdf'
     return response
+
 
 User = get_user_model()
 
@@ -318,7 +342,7 @@ class SurveyEditView(LoginRequiredMixin, View):
 
         else:
             survey = Survey.objects.create(title=title, created_by=request.user, created_at = oldsurvey.created_at,
-                                       deadline = deadline, allocated_points=(allocated_points + oldsurvey.allocated_points))
+                                       deadline = deadline, allocated_points=(int(allocated_points) + oldsurvey.allocated_points))
             oldsurvey.delete()                                      
 
         request.user.points -= int(allocated_points)
@@ -557,7 +581,7 @@ def export_survey_results(survey, questions):
 
     # create a response object with the Excel file
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    title = survey.title + " SurveyResults.xlsx"
+    title = survey.title + "_Results.xlsx"
     response['Content-Disposition'] = f'attachment; filename="{title}"'
     wb.save(response)
     return response
